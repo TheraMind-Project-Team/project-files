@@ -1,0 +1,181 @@
+===================================================================
+                  DIGITAL PSYCHIATRIST PLATFORM
+               SOFTWARE REQUIREMENTS SPECIFICATION
+===================================================================
+
+-------------------------------------------------------------------
+1. TECHNOLOGY STACK
+-------------------------------------------------------------------
+1.1 Frontend
+The user interface is built with React.js, providing a fast, responsive, and component-driven experience across all devices (desktop, tablet, mobile).
+
+- React.js (react ^18.x) -> Core UI framework – component-based SPA
+- React Router (react-router-dom ^6.x) -> Client-side navigation and routing
+- Axios (axios ^1.x) -> HTTP client for REST API communication
+- Redux Toolkit (redux-toolkit ^1.x) -> Global state management
+- Tailwind CSS (tailwindcss ^3.x) -> Utility-first CSS styling
+- WebRTC / Agora SDK (agora-rtc-sdk-ng) -> Real-time video consultation
+- React Hook Form (react-hook-form ^7.x) -> Form handling and validation
+- Chart.js (chart.js ^4.x) -> Mood tracking charts and visualizations
+- i18next (i18next ^23.x) -> Multilingual / internationalization support
+
+1.2 Backend
+The backend is developed using ASP.NET Core, offering a secure, high-performance RESTful API for all platform services.
+
+- ASP.NET Core (.NET 8.0) -> Core backend framework – RESTful API
+- Entity Framework Core (EF Core 8.x) -> ORM for database access and migrations
+- SQL Server (SQL Server 2022) -> Primary relational database
+- ASP.NET Identity (Microsoft.AspNetCore.Identity) -> Authentication and role management
+- JWT Bearer (System.IdentityModel.Tokens.Jwt) -> Stateless token-based authentication
+- SignalR (Microsoft.AspNetCore.SignalR) -> Real-time notifications and chat
+- AutoMapper (AutoMapper 12.x) -> Object-to-DTO mapping
+- Swagger / OpenAPI (Swashbuckle.AspNetCore) -> API documentation and testing UI
+- Serilog (Serilog 3.x) -> Structured logging
+- MailKit (MailKit 4.x) -> Email notifications (reminders, OTPs)
+
+1.3 AI & Machine Learning
+The AI engine is built on TensorFlow and integrates with the chatbot and virtual avatar to deliver real-time psychological assessments.
+- TensorFlow 2.x -> Deep learning framework for NLP model training and inference
+- Python 3.11 -> Language runtime for all AI/ML scripts
+- NLTK / spaCy -> Natural language processing: tokenization, sentiment analysis, entity recognition
+- scikit-learn -> Classification models (stress / anxiety / depression detection)
+- FastAPI -> Lightweight Python microservice exposing AI inference endpoints to the .NET backend
+- OpenCV -> Facial expression analysis for the 3D virtual avatar
+
+1.4 Database
+- SQL Server 2022 -> Primary relational store (users, appointments, records, prescriptions)
+- Redis -> In-memory cache for session tokens and real-time notification queues
+- Azure Blob Storage / AWS S3 -> Secure binary storage for PDF prescriptions and uploaded files
+
+1.5 Infrastructure & DevOps
+- Azure App Service / AWS EC2 -> Cloud hosting for backend and AI microservice
+- Docker -> Containerization of backend and AI services for consistent deployment
+- GitHub Actions -> CI/CD pipeline: automated build, test, and deploy on every push
+- Azure Key Vault -> Secrets management (connection strings, API keys, JWT secret)
+- Nginx -> Reverse proxy and SSL termination for all services
+
+-------------------------------------------------------------------
+2. INSTALLATION & SETUP GUIDE
+-------------------------------------------------------------------
+2.1 Prerequisites
+- .NET SDK (Min Version: 8.0) -> Required to build and run the ASP.NET Core backend
+- Node.js (Min Version: 18 LTS) -> Required to build the React frontend (npm included)
+- Python (Min Version: 3.11) -> Required for the AI/ML microservice (FastAPI)
+- SQL Server (Min Version: 2022) -> Can use SQL Server Express (free) for local development
+- Docker Desktop (Min Version: 4.x) -> Optional but recommended for containerized setup
+- Git (Min Version: 2.x) -> Source code version control
+- VS Code (Min Version: Latest) -> Recommended IDE (with C#, Python, ESLint extensions)
+- Visual Studio 2022 (Min Version: 17.x) -> Recommended for ASP.NET Core backend development
+
+2.2 Clone the Repository
+  git clone https://github.com/your-org/digital-psychiatrist-platform.git
+  cd digital-psychiatrist-platform
+
+2.3 Backend Setup (ASP.NET Core)
+  Step 1 – Navigate to the backend folder and restore NuGet packages:
+    cd backend
+    dotnet restore
+  Step 2 – Configure the connection string and secrets. Copy the template and fill in your values:
+    cp appsettings.Example.json appsettings.Development.json
+    * Open appsettings.Development.json and update keys (ConnectionStrings:DefaultConnection, JwtSettings:Secret, EmailSettings, PaymentGateway:ApiKey)
+  Step 3 – Apply Entity Framework migrations to create the database schema:
+    dotnet ef database update
+  Step 4 – Run the backend API (defaults to https://localhost:5001):
+    dotnet run
+
+2.4 Frontend Setup (React.js)
+  Step 1 – Navigate to the frontend folder and install npm dependencies:
+    cd ../frontend
+    npm install
+  Step 2 – Create the environment configuration file:
+    cp .env.example .env.local
+    * Set variables inside .env.local (REACT_APP_API_URL, REACT_APP_AGORA_APP_ID, REACT_APP_PAYMENT_PUBLIC_KEY)
+  Step 3 – Start the development server (runs on http://localhost:3000):
+    npm start
+
+2.5 AI Microservice Setup (Python / FastAPI)
+  Step 1 – Navigate to the AI service folder, create a virtual environment, and install dependencies:
+    cd ../ai-service
+    python -m venv venv && source venv/bin/activate
+    pip install -r requirements.txt
+    *(Includes: tensorflow==2.16.1, fastapi==0.111.0, uvicorn[standard]==0.29.0, nltk==3.8.1, spacy==3.7.4, scikit-learn==1.4.2, opencv-python==4.9.0, python-multipart==0.0.9, python-dotenv==1.0.1)
+  Step 2 – Run the FastAPI AI service (defaults to http://localhost:8000):
+    uvicorn main:app --reload --port 8000
+
+2.6 Docker Setup (Recommended for Production)
+  docker-compose up --build
+  * Containers started: db, backend, ai-service, frontend, redis.
+
+-------------------------------------------------------------------
+3. FUNCTIONAL REQUIREMENTS
+-------------------------------------------------------------------
+- FR-01 | AI Chatbot Assessment | Priority: High
+  The system shall provide a text-based AI chatbot that conducts an initial psychological assessment, detects emotional patterns, and generates a summary report.
+- FR-02 | 3D Virtual AI Avatar | Priority: High
+  The system shall include a 3D virtual doctor avatar that communicates via voice and facial expressions, analyzes speech, and produces a psychological report.
+- FR-03 | Smart Doctor Recommendation | Priority: High
+  For serious cases, the system shall automatically suggest the top-rated doctors near the user based on expertise, location, and patient reviews.
+- FR-04 | Appointment Booking | Priority: High
+  Users shall be able to book online (video) or offline (clinic) appointments with a doctor in a few steps.
+- FR-05 | Secure Online Payment | Priority: High
+  The system shall process payments securely using credit/debit cards or digital wallets, with instant booking confirmation.
+- FR-06 | Digital Prescription (PDF) | Priority: High
+  After a consultation, the doctor shall be able to issue a digitally signed PDF prescription stored in the patient archive.
+- FR-07 | Patient Archive | Priority: High
+  The system shall securely store all chat history, AI reports, prescriptions, and consultation notes in a private patient record.
+- FR-08 | Doctor Profiles | Priority: Medium
+  Each doctor shall have a public profile showing photo, bio, specializations, certifications, workplace, ratings, and patient reviews.
+- FR-09 | Anonymous Doctor Reviews | Priority: Medium
+  Patients shall be able to submit anonymous ratings and reviews after each session.
+- FR-10 | Role-Based Access Control | Priority: High
+  The system shall enforce role-based accounts for Patients, Doctors, and Administrators with appropriate permissions.
+- FR-11 | Appointment Reminders | Priority: Medium
+  The system shall send email and in-app reminders to patients and doctors before upcoming appointments.
+- FR-12 | Mood Tracking | Priority: Medium
+  Patients shall be able to log their daily mood; the system shall visualize trends over time.
+- FR-13 | Multilingual Support | Priority: Medium
+  The platform shall support at least Arabic and English with dynamic language switching.
+- FR-14 | Community Forum | Priority: Low
+  The platform shall provide a moderated forum where users can share experiences anonymously.
+
+-------------------------------------------------------------------
+4. NON-FUNCTIONAL REQUIREMENTS
+-------------------------------------------------------------------
+- NFR-01 | Performance | Priority: High
+  API response time shall not exceed 1 second for 95% of requests under normal load (up to 500 concurrent users).
+- NFR-02 | Scalability | Priority: High
+  The system shall scale horizontally to handle growing user numbers without rebuilding core components.
+- NFR-03 | Security – Encryption | Priority: High
+  All data in transit shall use TLS 1.3. Sensitive fields at rest (passwords, prescriptions) shall use AES-256 encryption.
+- NFR-04 | Security – Auth | Priority: High
+  Authentication shall use JWT tokens with a 15-minute access token expiry and secure refresh token rotation.
+- NFR-05 | Availability | Priority: High
+  The platform shall maintain 99.5% uptime; critical services (API, AI) shall have automated health checks and restart policies.
+- NFR-06 | Usability | Priority: Medium
+  The interface shall be fully responsive and pass WCAG 2.1 AA accessibility guidelines.
+- NFR-07 | Maintainability | Priority: Medium
+  Code shall follow clean architecture (separation of concerns), with at least 70% unit test coverage on the backend.
+- NFR-08 | Compatibility | Priority: Medium
+  The frontend shall support Chrome 110+, Firefox 110+, Safari 16+, and Edge 110+ on desktop and mobile.
+- NFR-09 | Data Privacy | Priority: High
+  All patient records shall comply with applicable health data protection laws; no data shall be shared with third parties without explicit consent.
+- NFR-10 | Backup & Recovery | Priority: High
+  Automated daily backups shall be performed; recovery time objective (RTO) shall be under 4 hours.
+
+-------------------------------------------------------------------
+5. SYSTEM CONSTRAINTS & ASSUMPTIONS
+-------------------------------------------------------------------
+5.1 Constraints
+- The AI psychological assessment is a screening tool only and is not a substitute for a clinical diagnosis by a licensed professional.
+- Video consultations require a stable internet connection with a minimum bandwidth of 2 Mbps for both patient and doctor.
+- Payment processing depends on third-party gateway availability (e.g., Stripe, PayTabs, or Fawry for Egypt).
+- The 3D virtual avatar feature requires WebGL support in the user's browser.
+- Prescription generation requires the doctor to be verified and onboarded by the platform administrator.
+
+5.2 Assumptions
+- Doctors using the platform are licensed mental health professionals who have completed the platform onboarding and verification process.
+- Users have access to a modern browser and a device with camera and microphone for video consultations.
+- All AI model training data has been collected and pre-processed ethically and with appropriate anonymization.
+- The platform is initially deployed for the Egyptian market with Arabic and English support; additional languages can be added in future releases.
+
+
